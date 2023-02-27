@@ -1,0 +1,43 @@
+{
+    "title": "Utility actor to Remove old storages",
+    "type": "object",
+    "schemaVersion": 1,
+    "properties": {
+        "deleteAfterDays": {
+            "title": "Delete after days",
+            "type": "integer",
+            "description": "Number of days after which all selected storages will be deleted",
+            "editor": "number",
+            "default": 90,
+            "prefill": 90
+        },
+        "forceDelete": {
+            "title": "Force delete",
+            "type": "boolean",
+            "description": "If checked it will really delete the storages, otherwise it will just log on output.",
+            "editor": "checkbox",
+            "default": false
+        },
+        "storageType": {
+            "title": "Storage Type",
+            "type": "string",
+            "description": "Select your storage type to remove",
+            "editor": "select",
+            "enum": [
+                "DATASET",
+                "KEY_VALUE",
+                "REQUEST_QUEUE",
+                "ALL"
+            ],
+            "enumTitles": [
+                "DATASET",
+                "KEY_VALUE",
+                "REQUEST_QUEUE",
+                "ALL"
+            ],
+            "default": "ALL",
+            "prefill": "ALL"
+        }
+    },
+    "required": ["deleteAfterDays", "storageType"]
+}
