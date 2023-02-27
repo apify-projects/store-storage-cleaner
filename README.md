@@ -6,11 +6,11 @@ Storage cleaner is a tool to delete all your Storage types (Datasets, Key-Value 
 
 You can either use the user-friendly UI in Apify Console to set up your actor or input it directly via JSON. Storage Cleaner recognizes these fields:
 
-`deleteAfterDays` - Sets the minimum limit value for Storages to be last accessed, otherwise they will be deleted.
+- `deleteAfterDays` - Sets the minimum limit value for Storages to be last accessed, otherwise they will be deleted.
 
-`forceDelete` - When unchecked/`false` it will only provide log of Storages that were filtered based on `deleteAfterDay` value. If checked/`true` - the storages will be really deleted.
+- `forceDelete` - When unchecked/`false` it will only provide log of Storages that were filtered based on `deleteAfterDay` value. If checked/`true` - the storages will be really deleted.
 
-`storageType` - Type of storage to delete. Allowed values are:
+- `storageType` - Type of storage to delete. Allowed values are:
   - `"DATASET"` - To delete only Dataset storages.
   - `"KEY_VALUE"` - To delete only Key-value storages.
   - `"REQUEST_QUEUE"` - To delete only Request queues.
