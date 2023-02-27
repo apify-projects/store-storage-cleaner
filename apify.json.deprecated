@@ -1,7 +1,0 @@
-{
-	"name": "storage-cleaner",
-	"version": "0.0",
-	"buildTag": "latest",
-	"env": null,
-	"template": "basic"
-}
