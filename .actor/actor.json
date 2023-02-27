@@ -1,0 +1,7 @@
+{
+    "actorSpecification": 1,
+    "name": "storage-cleaner",
+    "title": "Storage cleaner",
+    "description": "Storage cleaner is a tool to delete all your Storage types (Datasets, Key-Value storages and Request queues) on your Apify user account based on the amount of days since they were last accessed.",
+    "version": "1.0"
+  }
