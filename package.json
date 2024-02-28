@@ -5,11 +5,13 @@
 	"main": "main.js",
 	"dependencies": {
 		"apify": "^0.11.0",
-		"moment": "^2.24.0"
+		"moment": "^2.24.0",
+        "lodash": "^4.17.21"
 	},
 	"devDependencies": {},
 	"scripts": {
 		"start": "node ./src/main.js",
+		"start:apify": "apify run -p",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"repository": {

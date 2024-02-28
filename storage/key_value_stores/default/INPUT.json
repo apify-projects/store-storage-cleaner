@@ -1,0 +1,5 @@
+{
+    "deleteAfterDays": 1,
+    "forceDelete": true,
+    "storageType": "KEY_VALUE"
+}

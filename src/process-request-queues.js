@@ -1,19 +1,21 @@
 const Apify = require("apify");
 const { createState } = require("./state");
-const { DAY_IN_MS } = require("./constants");
 const moment = require("moment");
 
-let state = createState();
+const state = createState();
 
-async function processRequestQueue(deleteAfterDays, forceDelete) {
+async function processRequestQueues(deleteAfterDays, forceDelete, deleteUnnamedStorages) {
     const limit = 500;
-    let offset = 0;
 
-    while (true) {
+    const dateLimit = moment().add(-deleteAfterDays, 'days');
+
+    let totalItems = Number.MAX_SAFE_INTEGER;
+    while (state.offset <= totalItems) {
         const pages = await Apify.client.requestQueues.listQueues({
             token: process.env.APIFY_TOKEN,
             limit,
-            offset,
+            offset: state.offset,
+            unnamed: deleteUnnamedStorages,
             desc: false,
         });
 
@@ -21,29 +23,48 @@ async function processRequestQueue(deleteAfterDays, forceDelete) {
             break;
         }
 
-        const now = Date.now();
+        totalItems = pages.total;
 
-        for (const requestQueue of pages.items) {
-            state.offset++;
-            state.stats.processed++;
+        let nothingYetDeletedForThisPage = true;
 
-            const storeAccessedAt = new Date(requestQueue.accessedAt);
-            const diff = now - storeAccessedAt.getTime();
-            if (diff > deleteAfterDays * DAY_IN_MS) {
-                console.log(`${forceDelete ? 'Will' : 'Would'} delete request queue ${requestQueue.name}, last accessed at ${requestQueue.accessedAt}`);
+        const storagesToBeDeleted = [];
+
+        for (const storage of pages.items) {
+            if (moment(storage.accessedAt).isBefore(dateLimit)) {
+                storagesToBeDeleted.push(storage);
                 if (forceDelete) {
-                    // Delete
-                    await Apify.client.requestQueues.deleteQueue({
-                        token: process.env.APIFY_TOKEN,
-                        queueId: requestQueue.id
-                    })
-                        .catch((e) => { console.error(e); state.stats.issued++; })
-                        .then(() => { state.stats.deleted++; });
+                    nothingYetDeletedForThisPage = false;
                 }
+            }
+            if (nothingYetDeletedForThisPage) {
+                state.offset++;
             }
         }
 
-        offset += limit;
+        if (storagesToBeDeleted.length > 0) {
+            console.log(`${forceDelete ? 'Will' : 'Would'} delete ${storagesToBeDeleted.length} kv-stores:\n` +
+                `${storagesToBeDeleted.map((store) => `${store.name || store.id}: accessed ${store.accessedAt}`).join(`\n`)}`);
+        }
+
+        if (forceDelete) {
+            while (storagesToBeDeleted.length > 0) {
+                const deletedStorages = [];
+                await Promise.allSettled(
+                    storagesToBeDeleted.splice(0, 10).map((requestQueue) =>
+                        Apify.client.requestQueues.deleteQueue({
+                            queueId: requestQueue.id,
+                            token: process.env.APIFY_TOKEN,
+                        })
+                            .catch((e) => { console.error(e); state.stats.issued++; })
+                            .then(() => {
+                                state.stats.deleted++;
+                                deletedStorages.push(requestQueue);
+                            })
+                    )
+                )
+                console.log(`Request Queues with: ${deletedStorages.map(store => store.name || store.id).join('. ')} were successfully Deleted!`)
+            }
+        }
 
         const daysAgoMoment = moment().subtract(deleteAfterDays, 'days');
         const shouldStop = pages.items.some((store) => {
@@ -56,6 +77,6 @@ async function processRequestQueue(deleteAfterDays, forceDelete) {
 }
 
 module.exports = {
-    processRequestQueue,
+    processRequestQueues,
     stateRequestQueues: state
 }

@@ -4,7 +4,7 @@ module.exports = {
         stats: {
             issued: 0,
             deleted: 0,
-            processed: 0
+            offset: 0
         }
     })
 }
