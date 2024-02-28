@@ -18,6 +18,13 @@
             "editor": "checkbox",
             "default": false
         },
+        "deleteUnnamedStorages": {
+            "title": "Delete unnamed storages",
+            "type": "boolean",
+            "description": "If checked it will delete not only named storages but also unnamed storages",
+            "editor": "checkbox",
+            "default": false
+        },
         "storageType": {
             "title": "Storage Type",
             "type": "string",
