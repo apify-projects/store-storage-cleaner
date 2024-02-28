@@ -1,3 +1,7 @@
+## Deprecated
+
+Curretnly developed as a part of https://github.com/apify-projects/store-useful-tools
+
 ## What does Storage Cleaner do?
 
 Storage cleaner is a tool to delete all your Storage types (Datasets, Key-Value storages and Request queues) on your Apify user account based on the amount of days since they were last accessed.
